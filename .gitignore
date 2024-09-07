@@ -1,0 +1,7 @@
+.idea
+./laravel/node_modules
+./laravel/.env
+./laravel/.idea
+./fastapi/.env
+./fastapi/export_docs
+./fastapi/temp_files

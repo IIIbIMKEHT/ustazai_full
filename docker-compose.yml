@@ -1,0 +1,53 @@
+services:
+  laravel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - app-network
+    environment:
+      - DB_HOST=db
+      - DB_DATABASE=ustaz
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+
+  fastapi:
+    build:
+      context: ./fastapi  # путь к директории FastAPI
+      dockerfile: Dockerfile
+    container_name: fastapi_app
+    ports:
+      - "9000:9000"
+    networks:
+      - app-network
+    volumes:
+      - ./fastapi:/app
+
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ustaz
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+    ports:
+      - "3306:3306"
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local

@@ -1,0 +1,5 @@
+.env
+./export_docs
+./temp_files
+.venv
+.idea
