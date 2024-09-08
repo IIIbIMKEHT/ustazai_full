@@ -1,20 +1,13 @@
-# Используем Python 3.12
 FROM python:3.12
 
-# Устанавливаем рабочую директорию
-WORKDIR /code
+# Установка distutils
+RUN apt-get update && apt-get install -y python3-pip python3-setuptools
 
-# Копируем файл с зависимостями
-COPY ./requirements.txt /code/requirements.txt
+WORKDIR /app
 
-# Устанавливаем зависимости
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Копируем приложение
-COPY ./app /code/app
+COPY . /app
 
-# Открываем порт 9000
-EXPOSE 9000
-
-# Запускаем FastAPI с использованием uvicorn
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "9000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "9000"]

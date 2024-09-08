@@ -1,13 +1,13 @@
 services:
   laravel:
     build:
-      context: .
+      context: ./laravel
       dockerfile: Dockerfile
     container_name: laravel_app
     ports:
       - "8000:80"
     volumes:
-      - .:/var/www/html
+      - ./laravel:/var/www/html
     networks:
       - app-network
     environment:
@@ -15,6 +15,19 @@ services:
       - DB_DATABASE=ustaz
       - DB_USERNAME=root
       - DB_PASSWORD=root
+    depends_on:
+      - db  # Убедитесь, что laravel зависит от db
+    command: >
+      sh -c "sleep 10 && cp .env.example .env &&
+      composer config --global process-timeout 100000 &&
+      composer install &&
+      npm install --fetch-timeout=500000 --fetch-retries=30 &&
+      npm run build &&
+      php artisan key:generate &&
+      php artisan migrate --seed &&
+      chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache &&
+      chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache &&
+      apache2-foreground"
 
   fastapi:
     build:
@@ -33,12 +46,11 @@ services:
     container_name: mysql_db
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ustaz
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ustaz
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app-network
     ports:

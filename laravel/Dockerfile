@@ -1,36 +1,40 @@
-# Используем PHP 8.1 с Apache
 FROM php:8.2-apache
 
-# Устанавливаем необходимые расширения PHP
+# Установка необходимых пакетов для PHP и Node.js
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
     zip \
-    libzip-dev \
     unzip \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql gd zip
+    git \
+    curl \
+    nodejs \
+    npm
 
-# Устанавливаем Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Установка Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Устанавливаем зависимости Laravel
-WORKDIR /var/www/html
-COPY . .
-RUN composer install
+# Установка необходимых расширений PHP
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-install gd pdo pdo_mysql
 
-# Настройки прав доступа для хранения и кеша
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Копируем конфигурацию Apache
-COPY ./docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
-
-# Включаем mod_rewrite для Laravel
+# Включение модуля mod_rewrite для Apache
 RUN a2enmod rewrite
 
-# Открываем 80 порт
-EXPOSE 80
+# Настройка Apache для обслуживания из директории public
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+RUN echo "<Directory /var/www/html/public> \n\
+    Options Indexes FollowSymLinks \n\
+    AllowOverride All \n\
+    DirectoryIndex index.php \n\
+    Require all granted \n\
+</Directory>" >> /etc/apache2/apache2.conf
 
-# Запуск Apache
-CMD ["apache2-foreground"]
+# Копирование файлов проекта
+COPY . /var/www/html
+
+
+# Переход в директорию проекта
+WORKDIR /var/www/html
+
