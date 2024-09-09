@@ -42,6 +42,11 @@ def generate_doc(html_content):
 
     # Сохраняем документ
     file_path = os.path.join(UPLOAD_FOLDER, file_name)
+
+    # Создаем директорию, если она не существует
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+    # Сохраняем документ
     doc.save(file_path)
 
     # Возвращаем ссылку на скачивание

@@ -39,7 +39,7 @@
                     document.getElementById('export-word').addEventListener('click', function(event) {
                         event.preventDefault();  // Предотвращаем переход по текущей пустой ссылке
                         // Пример динамической ссылки
-                        const wordFileLink = 'http://localhost:9000' + data.wordLink;
+                        const wordFileLink = 'http://fastapi_app:5000' + data.wordLink;
                         // Вставляем ссылку в элемент <a>
                         this.setAttribute('href', wordFileLink);
                         // Перенаправляем пользователя по новой ссылке

@@ -43,7 +43,7 @@ class GenerateMaterial extends Component
         $this->content = '';
         $this->wordLink = '';
         $this->pdfLink = '';
-        $response = Http::timeout(300)->post('http://localhost:9000/generate_material', [
+        $response = Http::timeout(300)->post('http://fastapi_app:5000/generate_material', [
             'class_level' => strval($this->class_id),
             'subject' => $this->subject_id,
             'task_type' => $this->type->id,
