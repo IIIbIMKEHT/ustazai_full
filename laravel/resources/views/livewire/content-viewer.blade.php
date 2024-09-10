@@ -2,7 +2,23 @@
     <style>
         mjx-container {text-align: left!important; display: inline!important;}
         #export-word {display: none; background-color: #4b5563!important; color: white!important;}
-
+        #content {margin: 20px 0;}
+        #content h1 {
+            margin: 20px 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #content h2 {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #content ul {
+            list-style: inside;
+        }
+        #content p {
+            margin: 10px 0;
+        }
     </style>
 @endpush
 <div>

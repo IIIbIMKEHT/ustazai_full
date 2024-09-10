@@ -7,7 +7,7 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv(), override=True)
 
 # chat_model = ChatOpenAI(model_name="gpt-4o-2024-08-06", temperature=0.6, max_tokens=4096, top_p=0.8)
-chat_model = ChatOpenAI(model_name="gpt-4o", temperature=0.6, max_tokens=4096, top_p=0.8)
+chat_model = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.6, max_tokens=4096, top_p=0.8)
 
 
 def check_topic_validity(class_level: str, subject_id: int, topic: str) -> bool:
