@@ -106,7 +106,7 @@
                                 @endforeach
                             </select>
                         </label>
-                        @if($type->id == 1)
+                        @if($type->id == 1 || $type->id == 2)
                             <label class="block">
                                 <span>Выберите количество тестов</span>
                                 <select wire:model.blur="qty"
