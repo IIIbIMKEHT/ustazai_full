@@ -88,24 +88,29 @@
                         </label>
                         <label class="block">
                             <span>Выберите класс</span>
-                            <select wire:model.blur="class_id"
+                            <select wire:model.change="class_id"
                                 class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
                             >
-                                @foreach($classes as $class)
-                                    <option value="{{$class}}">{{$class}}</option>
+                                <option value="">Выберите класс</option>
+                                @foreach($classes as $id => $class)
+                                    <option value="{{ $id }}">{{ $class }}</option>
                                 @endforeach
                             </select>
                         </label>
-                        <label class="block">
-                            <span>Выберите предмет</span>
-                            <select wire:model.blur="subject_id"
-                                class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
-                            >
-                                @foreach($subjects as $subject)
-                                    <option value="{{$subject->id}}">{{$subject->title_ru}}</option>
-                                @endforeach
-                            </select>
-                        </label>
+                    
+                        @if (!empty($subjects))
+                            <label class="block">
+                                <span>Выберите предмет</span>
+                                <select wire:model="subject_id"
+                                    class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
+                                >
+                                    <option value="">Выберите предмет</option>
+                                    @foreach($subjects as $subject)
+                                        <option value="{{ $subject->id }}">{{ $subject->title_ru }}</option>
+                                    @endforeach
+                                </select>
+                            </label>
+                        @endif
                         @if($type->id == 1 || $type->id == 2)
                             <label class="block">
                                 <span>Выберите количество тестов</span>
@@ -114,7 +119,7 @@
                                 >
                                     <option value="5">5</option>
                                     <option value="10">10</option>
-                                    <option value="20">20</option>
+                                    <option value="20">15</option>
                                 </select>
                             </label>
                         @endif
@@ -131,16 +136,18 @@
                                 </select>
                             </label>
                         @endif
-                        <label class="block">
-                            <span>Тема урока:</span>
-                            <input
-                                class="form-input mt-1.5 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
-                                placeholder="введите тему урока"
-                                type="text"
-                                wire:model.blur="topic"
-                            />
-                            <div class="text-red-500">@error('topic') {{ $message }} @enderror</div>
-                        </label>
+                        @if($type->id != 9)
+                            <label class="block">
+                                <span>Тема урока:</span>
+                                <input
+                                    class="form-input mt-1.5 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+                                    placeholder="введите тему урока"
+                                    type="text"
+                                    wire:model.blur="topic"
+                                />
+                                <div class="text-red-500">@error('topic') {{ $message }} @enderror</div>
+                            </label>
+                        @endif
                         <label class="block">
 
                             <input

@@ -14,9 +14,21 @@ class GenerateMaterial extends Component
 {
     public $loading = false;
     public MaterialType $type;
-    public $classes = [1,2,3,4,5,6,7,8,9,10,11];
+    public $classes = [
+        1 => '1 класс',
+        2 => '2 класс',
+        3 => '3 класс',
+        4 => '4 класс',
+        5 => '5 класс',
+        6 => '6 класс',
+        7 => '7 класс',
+        8 => '8 класс',
+        9 => '9 класс',
+        10 => '10 класс',
+        11 => '11 класс'
+    ];
     public $class_id;
-    public $subjects;
+    public $subjects = [];
     public $subject_id;
     // #[Validate('required', message: 'Тему урока обязательно надо указать')]
     public $topic;
@@ -29,12 +41,31 @@ class GenerateMaterial extends Component
     public function mount(MaterialType $type): void
     {
         $this->type = $type;
-        $this->class_id = 1;
-        $this->subject_id = 1;
         $this->lang = 1;
         $this->qty = 5;
         $this->term = "1";
-        $this->subjects = Subject::all();
+    }
+
+    public function updatedClassId()
+    {
+        // Обновляем список предметов в зависимости от выбранного класса
+        if (in_array($this->class_id, [1, 2, 3, 4])) {
+            // Предметы для 1-4 классов
+            $this->subjects = Subject::whereIn('title_ru', [
+                'Казахский язык', 'Русский язык', 'Литературное чтение', 'Математика', 'Окружающий мир', 
+                'Изобразительное искусство', 'Музыка', 'Трудовое обучение', 'Физическая культура', 'Самопознание'
+            ])->get();
+        } elseif (in_array($this->class_id, [5, 6, 7, 8, 9, 10, 11])) {
+            // Предметы для 5-11 классов
+            $this->subjects = Subject::whereIn('title_ru', [
+                'Казахский язык и литература', 'Русский язык и литература', 'Английский язык', 
+                'История Казахстана', 'Всеобщая история', 'Математика', 'География', 'Биология', 
+                'Физика', 'Химия', 'Информатика', 'Изобразительное искусство', 'Трудовое обучение', 
+                'Физическая культура', 'Самопознание'
+            ])->get();
+        }
+
+        $this->subject_id = null; // Сбросить выбранный предмет
     }
 
     public function send()
@@ -42,7 +73,7 @@ class GenerateMaterial extends Component
         
         set_time_limit(300); // Устанавливает лимит в 60 секунд
         $this->loading = true;
-        $this->content = '';
+        $this->dispatch('recreate');
         $this->wordLink = '';
         $this->pdfLink = '';
         

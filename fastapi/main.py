@@ -1,7 +1,7 @@
 import os
 
 from fastapi import FastAPI, HTTPException
-from starlette.responses import FileResponse
+from fastapi.responses import FileResponse
 
 from models.material_model import MaterialRequest
 from services.generate_pdf import generate_pdf
