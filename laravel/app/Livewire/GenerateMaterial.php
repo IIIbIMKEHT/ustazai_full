@@ -18,9 +18,10 @@ class GenerateMaterial extends Component
     public $class_id;
     public $subjects;
     public $subject_id;
-    #[Validate('required', message: 'Тему урока обязательно надо указать')]
+    // #[Validate('required', message: 'Тему урока обязательно надо указать')]
     public $topic;
     public $qty;
+    public $term;
     public $lang;
     public $content;
     public $wordLink;
@@ -32,27 +33,30 @@ class GenerateMaterial extends Component
         $this->subject_id = 1;
         $this->lang = 1;
         $this->qty = 5;
+        $this->term = "1";
         $this->subjects = Subject::all();
     }
 
     public function send()
     {
-        $this->validate();
+        
         set_time_limit(300); // Устанавливает лимит в 60 секунд
         $this->loading = true;
         $this->content = '';
         $this->wordLink = '';
         $this->pdfLink = '';
+        
         $response = Http::timeout(300)->post('http://fastapi_app:5000/generate_material', [
             'class_level' => strval($this->class_id),
             'subject' => $this->subject_id,
             'task_type' => $this->type->id,
-            'topic' => $this->topic,
+            'topic' => $this->type->id == 9 ? "" : $this->topic,
             'is_kk' => $this->lang,
-            'qty' => $this->qty
+            'qty' => $this->qty,
+            'term' => $this->term
         ]);
         $result = json_decode($response->body(), 1);
-
+        
         if ($result['valid']) {
             $this->content = $result['material'];
             $this->wordLink = $result['wordLink'];
@@ -61,7 +65,7 @@ class GenerateMaterial extends Component
                 'subject_id' => $this->subject_id,
                 'type_id' => $this->type->id,
                 'class_level' => $this->class_id,
-                'title' => $this->topic,
+                'title' => $this->type->id == 9 ? "СОЧ" : $this->topic,
                 'content' => $result['material'],
                 'word_link' => $result['wordLink']
             ]);

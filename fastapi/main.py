@@ -21,7 +21,7 @@ async def generate_material_endpoint(request: MaterialRequest):
         return {"error": "The selected topic does not match the subject and class.", "valid": False}
 
     material = generate_material(request.class_level, request.subject, request.topic, request.task_type,
-                                 is_kk=request.is_kk, qty=request.qty)
+                                 is_kk=request.is_kk, qty=request.qty, term=request.term)
     wordLink = generate_doc(material)
 
     return {

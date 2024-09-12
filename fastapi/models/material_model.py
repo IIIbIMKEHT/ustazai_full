@@ -15,6 +15,7 @@ class MaterialRequest(BaseModel):
     topic: str
     qty: int = None
     is_kk: bool = True
+    term: str = "1"
 
 
 

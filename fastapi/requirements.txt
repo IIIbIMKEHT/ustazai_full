@@ -11,3 +11,4 @@ beautifulsoup4
 htmldocx
 html2image
 xhtml2pdf
+tiktoken

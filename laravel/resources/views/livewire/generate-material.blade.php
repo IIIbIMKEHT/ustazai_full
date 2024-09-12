@@ -118,6 +118,19 @@
                                 </select>
                             </label>
                         @endif
+                        @if($type->id == 9)
+                            <label class="block">
+                                <span>Выберите четверть</span>
+                                <select wire:model.blur="term"
+                                    class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
+                                >
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </label>
+                        @endif
                         <label class="block">
                             <span>Тема урока:</span>
                             <input

@@ -13,11 +13,22 @@
             font-size: 18px;
             font-weight: bold;
         }
+        #content h3 {
+            margin: 5px 0;
+            font-weight: bold;
+        }
         #content ul {
             list-style: inside;
+            margin: 10px 0;
         }
         #content p {
             margin: 10px 0;
+        }
+        table, tbody, tr, th, td {
+            border: 1px black solid;
+        }
+        table th, td {
+            padding: 5px 10px;
         }
     </style>
 @endpush
