@@ -1,13 +1,12 @@
 @extends('layout.default')
 @push('css')
     <style>
-        .btn {
-            background-color: transparent!important;
-        }
+        .btn {background-color: transparent!important}
     </style>
 @endpush
 @section('content')
     <main class="grid w-full grow grid-cols-1 place-items-center">
+        
         <div class="w-full max-w-[26rem] p-4 sm:px-5">
             <div class="text-center">
                 <img
@@ -33,6 +32,40 @@
                     <div class="bg-center bg-cover w-12 h-8" style='background-image: url("{{asset('assets/images/google-logo.png')}}")'></div>
                     <span>Google</span>
                 </a>
+            </div>
+            <div class="my-7 flex items-center space-x-3">
+                <div class="h-px flex-1 bg-slate-200 dark:bg-navy-500"></div>
+                <p>OR</p>
+                <div class="h-px flex-1 bg-slate-200 dark:bg-navy-500"></div>
+              </div>
+            <div class="flex space-x-4 my-5">
+                <form action="{{route('auth.simple')}}" method="post" class="w-full">
+                    @csrf
+                    <label class="block">
+                        <input
+                          class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+                          placeholder="Login"
+                          type="text"
+                          name="name"
+                        />
+                      </label>
+                      <div class="my-3"></div>
+                      <label class="block">
+                        <input
+                          class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+                          placeholder="Password"
+                          type="password"
+                          name="password"
+                        />
+                      </label>
+                      <label class="block">
+                        <input
+                            class="form-input mt-1.5 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
+                            type="submit"
+                            value="Отправить"
+                        />
+                    </label>
+            </form>
             </div>
             <div
                 class="flex justify-center text-xs text-slate-400 dark:text-navy-300"

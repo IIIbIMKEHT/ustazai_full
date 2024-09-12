@@ -13,6 +13,20 @@ class AuthController extends Controller
     {
         return view('login');
     }
+    public function simpleAuth(Request $request)
+    {
+        $credentials = $request->validate([
+            'name' => ['required'],
+            'password' => ['required']
+        ]);
+        
+        if (Auth::attempt($credentials)) {
+            
+            $request->session()->regenerate();
+ 
+            return redirect(route('dashboard'));
+        }
+    }
     public function google()
     {
         return Socialite::driver('google')->redirect();

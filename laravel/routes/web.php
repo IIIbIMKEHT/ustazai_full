@@ -26,4 +26,5 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('login', [AuthController::class, 'login'])->name('login');
     Route::get('google', [AuthController::class, 'google'])->name('auth.google');
     Route::get('google-callback', [AuthController::class, 'googleCallback'])->name('auth.google-callback');
+    Route::post('simple-auth', [AuthController::class, 'simpleAuth'])->name('auth.simple');
 });
