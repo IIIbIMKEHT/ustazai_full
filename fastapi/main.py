@@ -2,16 +2,36 @@ import os
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
-
+from fastapi.responses import StreamingResponse
+from langchain.callbacks.streaming_aiter import AsyncIteratorCallbackHandler
+from helper.prompt_helper import get_prompt
 from models.material_model import MaterialRequest
 from services.generate_pdf import generate_pdf
 from services.generate_service import check_topic_validity, generate_material
 import uvicorn
-
+from services.stream_service import run_call, create_gen
 from services.generate_word import generate_doc
 
 app = FastAPI()
 
+
+@app.post("/stream_material/")
+async def generate_material_endpoint(request: MaterialRequest):
+    is_valid = check_topic_validity(request.class_level, request.subject, request.topic)
+
+    if not is_valid:
+        return {"error": "The selected topic does not match the subject and class.", "valid": False}
+
+    prompt = get_prompt(class_level=request.class_level, subject_id=request.subject, topic=request.topic, task_type=request.task_type,
+                        is_kk=request.is_kk, qty=request.qty, level_test=None, term=request.term)
+    
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": prompt}
+    ]
+    stream_it = AsyncIteratorCallbackHandler()
+    gen = create_gen(query=prompt, stream_it=stream_it)
+    return StreamingResponse(gen, media_type="text/event-stream")
 
 @app.post("/generate_material/")
 async def generate_material_endpoint(request: MaterialRequest):
