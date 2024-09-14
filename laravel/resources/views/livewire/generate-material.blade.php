@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <form wire:submit.prevent="send">
+    <form wire:submit.prevent="startStream">
         <div class="p-5">
             <div class="flex flex-col items-center justify-between space-y-4 py-5 sm:flex-row sm:space-y-0 lg:py-6">
                 <div class="flex items-center space-x-1">
@@ -62,14 +62,14 @@
                             </div>
                         </div>
                         <div class="card px-4 py-4 sm:px-5">
-                                <div class="spinner is-grow relative size-7" wire:loading wire:target="send">
-                                    <span
-                                        class="absolute inline-block h-full w-full rounded-full bg-primary opacity-75 dark:bg-accent"
-                                    ></span>
-                                    <span
-                                        class="absolute inline-block h-full w-full rounded-full bg-primary opacity-75 dark:bg-accent"
-                                    ></span>
-                                </div>
+                            <div class="spinner is-grow relative size-7" wire:loading wire:target="startStream">
+                                <span
+                                    class="absolute inline-block h-full w-full rounded-full bg-primary opacity-75 dark:bg-accent"
+                                ></span>
+                                <span
+                                    class="absolute inline-block h-full w-full rounded-full bg-primary opacity-75 dark:bg-accent"
+                                ></span>
+                            </div>
                             <livewire:content-viewer />
 
                         </div>
@@ -79,7 +79,7 @@
                     <div class="card space-y-5 p-4 sm:p-5">
                         <label class="block">
                             <span>Выберите язык</span>
-                            <select wire:model.blur="lang"
+                            <select wire:model.blur="lang_id"
                                 class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
                             >
                                 <option value="1">Казахский</option>
@@ -96,6 +96,7 @@
                                     <option value="{{ $id }}">{{ $class }}</option>
                                 @endforeach
                             </select>
+                            <div class="text-red-500">@error('class_id') {{ $message }} @enderror</div>
                         </label>
                     
                         @if (!empty($subjects))
@@ -109,7 +110,9 @@
                                         <option value="{{ $subject->id }}">{{ $subject->title_ru }}</option>
                                     @endforeach
                                 </select>
+                                <div class="text-red-500">@error('subject_id') {{ $message }} @enderror</div>
                             </label>
+
                         @endif
                         @if($type->id == 1 || $type->id == 2)
                             <label class="block">
@@ -157,6 +160,7 @@
                                 value="Отправить"
                             />
                         </label>
+                        
                     </div>
                 </div>
             </div>

@@ -8,6 +8,7 @@ use App\Models\Subject;
 use Database\Seeders\SubjectSeeder;
 use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\Validate;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class GenerateMaterial extends Component
@@ -27,23 +28,34 @@ class GenerateMaterial extends Component
         10 => '10 класс',
         11 => '11 класс'
     ];
+    #[Validate('required')]
     public $class_id;
     public $subjects = [];
+    #[Validate('required')]
     public $subject_id;
     // #[Validate('required', message: 'Тему урока обязательно надо указать')]
     public $topic;
     public $qty;
     public $term;
-    public $lang;
+    public $lang = true;
+    public $lang_id;
     public $content;
     public $wordLink;
     public $pdfLink;
     public function mount(MaterialType $type): void
     {
         $this->type = $type;
-        $this->lang = 1;
         $this->qty = 5;
         $this->term = "1";
+    }
+
+    public function updatedLangId()
+    {
+        if ($this->lang_id == 1) {
+            $this->lang = true;
+        } else {
+            $this->lang = false;
+        }
     }
 
     public function updatedClassId()
@@ -51,26 +63,48 @@ class GenerateMaterial extends Component
         // Обновляем список предметов в зависимости от выбранного класса
         if (in_array($this->class_id, [1, 2, 3, 4])) {
             // Предметы для 1-4 классов
-            $this->subjects = Subject::whereIn('title_ru', [
-                'Казахский язык', 'Русский язык', 'Литературное чтение', 'Математика', 'Окружающий мир', 
-                'Изобразительное искусство', 'Музыка', 'Трудовое обучение', 'Физическая культура', 'Самопознание'
+            $this->subjects = Subject::whereIn('id', [
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10
             ])->get();
         } elseif (in_array($this->class_id, [5, 6, 7, 8, 9, 10, 11])) {
             // Предметы для 5-11 классов
-            $this->subjects = Subject::whereIn('title_ru', [
-                'Казахский язык и литература', 'Русский язык и литература', 'Английский язык', 
-                'История Казахстана', 'Всеобщая история', 'Алгебра', 'Геометрия', 'География', 'Биология', 
-                'Физика', 'Химия', 'Информатика', 'Изобразительное искусство', 'Трудовое обучение', 
-                'Физическая культура', 'Самопознание'
-            ])->get();
+            $this->subjects = Subject::whereIn('id', [11,12,13,14,15,16,17,18,19,20,21,22,23,24,25])->get();
         }
 
         $this->subject_id = null; // Сбросить выбранный предмет
     }
 
-    public function send()
+    public function startStream()
     {
-        
+        $this->validate();
+        $this->dispatch('clear-content');
+        $this->dispatch('start-stream', detail: [
+            'class_level' => strval($this->class_id),
+            'subject' => intval($this->subject_id),
+            'task_type' => intval($this->type->id),
+            'topic' => $this->type->id == 9 ? "" : $this->topic,
+            'is_kk' => $this->lang,
+            'qty' => $this->qty,
+            'term' => $this->term
+        ]);
+    }
+
+    #[On('save-data')]
+    public function saveData($content, $link)
+    {
+        Material::create([
+            'user_id' => auth()->id(),
+            'subject_id' => $this->subject_id,
+            'type_id' => $this->type->id,
+            'class_level' => $this->class_id,
+            'title' => $this->type->id == 9 ? "СОЧ" : $this->topic,
+            'content' => $content,
+            'word_link' => $link
+        ]);
+        $this->dispatch('update-list');
+    }
+    public function send()
+    {       
         set_time_limit(300); // Устанавливает лимит в 60 секунд
         $this->loading = true;
         $this->dispatch('recreate');

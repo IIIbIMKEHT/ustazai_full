@@ -1,7 +1,8 @@
+import asyncio
 import os
-
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.responses import StreamingResponse
 from langchain.callbacks.streaming_aiter import AsyncIteratorCallbackHandler
 from helper.prompt_helper import get_prompt
@@ -9,29 +10,26 @@ from models.material_model import MaterialRequest
 from services.generate_pdf import generate_pdf
 from services.generate_service import check_topic_validity, generate_material
 import uvicorn
-from services.stream_service import run_call, create_gen
+from services.stream_service import getStream
 from services.generate_word import generate_doc
 
 app = FastAPI()
+# Разрешение всех источников (для разработки)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Можно указать конкретные домены, например: ["http://localhost:3000", "http://example.com"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/stream_material/")
+async def generate_material_endpoint(class_level: int, subject: str, topic: str, task_type: str, is_kk: bool, qty: int, term: str):
+    return StreamingResponse(getStream(class_level=class_level, subject=subject, topic=topic, task_type=task_type,
+                                 is_kk=is_kk, qty=qty, term=term), media_type="text/event-stream")
 
 
-@app.post("/stream_material/")
-async def generate_material_endpoint(request: MaterialRequest):
-    is_valid = check_topic_validity(request.class_level, request.subject, request.topic)
 
-    if not is_valid:
-        return {"error": "The selected topic does not match the subject and class.", "valid": False}
-
-    prompt = get_prompt(class_level=request.class_level, subject_id=request.subject, topic=request.topic, task_type=request.task_type,
-                        is_kk=request.is_kk, qty=request.qty, level_test=None, term=request.term)
-    
-    messages = [
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": prompt}
-    ]
-    stream_it = AsyncIteratorCallbackHandler()
-    gen = create_gen(query=prompt, stream_it=stream_it)
-    return StreamingResponse(gen, media_type="text/event-stream")
 
 @app.post("/generate_material/")
 async def generate_material_endpoint(request: MaterialRequest):
@@ -52,6 +50,21 @@ async def generate_material_endpoint(request: MaterialRequest):
         "valid": True
     }
 
+
+@app.post("/generate_doc/")
+async def generate_document_endpoint(request: Request):
+    # Получаем HTML-контент из POST-запроса
+    data = await request.json()
+    html_content = data.get("html_content")
+    
+    if not html_content:
+        return JSONResponse(status_code=400, content={"error": "HTML content is missing"})
+
+    # Генерация Word документа
+    download_link = generate_doc(html_content)
+    
+    # Возвращаем ссылку на скачивание
+    return JSONResponse(content={"download_link": download_link})
 
 @app.get('/download/{filename}')
 async def download_file(filename: str):

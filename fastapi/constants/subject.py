@@ -19,7 +19,7 @@ def get_subject_by_id(subject_id: int, lang: str = 'ru') -> str:
         case 9:
             result = {'kk': 'Дене шынықтыру', 'ru': 'Физическая культура'}
         case 10:
-            result = {'kk': 'Самопознание', 'ru': 'Самопознание'}
+            result = {'kk': 'Өзін-өзі тану', 'ru': 'Самопознание'}
         case 11:
             result = {'kk': 'Қазақ тілі мен әдебиеті', 'ru': 'Казахский язык и литература'}
         case 12:
@@ -49,7 +49,7 @@ def get_subject_by_id(subject_id: int, lang: str = 'ru') -> str:
         case 24:
             result = {'kk': 'Физикалық мәдениет', 'ru': 'Физическая культура'}
         case 25:
-            result = {'kk': 'Самопознание', 'ru': 'Самопознание'}
+            result = {'kk': 'Өзін-өзі тану', 'ru': 'Самопознание'}
         case _:
             result = {'kk': 'Предмет табылмады', 'ru': 'Предмет не найден'}
 

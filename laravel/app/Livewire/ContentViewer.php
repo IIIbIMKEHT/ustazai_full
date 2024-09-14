@@ -11,12 +11,7 @@ use PhpOffice\PhpWord\Shared\Html;
 
 class ContentViewer extends Component
 {
-    #[On('get-content')]
-    public function getContent($content): void
-    {
-
-    }
-
+    
     public function exportToPDF($content): void
     {
         $fileName = Str::random(10).'.pdf';

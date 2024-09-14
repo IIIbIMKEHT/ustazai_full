@@ -34,11 +34,11 @@
 @endpush
 <div>
     <div id="content">
-
+        
     </div>
     <div class="container flex " id="action-buttons">
         <div class="mx-3"></div>
-        <a target="_blank" href="#" id="export-word"
+        <a id="export-word"
                 class="btn bg-slate-150 font-medium text-slate-800 hover:bg-slate-200 focus:bg-slate-200 active:bg-slate-200/80 dark:bg-navy-500 dark:text-navy-50 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
         >
             Экспорт в WORD
@@ -49,36 +49,82 @@
 @push('js')
     <script>
         document.addEventListener("livewire:init", () => {
-            Livewire.on('run-formatter', (data) => {
-                const contentDiv = document.getElementById('content');
-                console.log(data)
+            Livewire.on('start-stream', (event) => {
+                const { class_level, subject, topic, is_kk, qty, term, task_type } = event.detail;
+                
+                const eventSource = new EventSource(`http://localhost:5000/stream_material/?class_level=${class_level}&subject=${subject}&topic=${topic}&is_kk=${is_kk}&qty=${qty}&term=${term}&task_type=${task_type}`);
+                const generateDocBtn = document.getElementById("export-word");
+                const streamOutput = document.getElementById('content');
+                let downloadLink = '';
+                let collectedHTML = '';
 
-                if (contentDiv) {
-                    contentDiv.innerHTML = data.content; // Добавляем содержимое
-                    document.getElementById('export-word').style.display = 'flex';
+                // Функция для декодирования HTML-сущностей
+                function decodeHTMLEntities(text) {
+                    const textArea = document.createElement('textarea');
+                    textArea.innerHTML = text;
+                    return textArea.value;
+                }
 
-                    document.getElementById('export-word').addEventListener('click', function(event) {
-                        event.preventDefault();  // Предотвращаем переход по текущей пустой ссылке
-                        // Пример динамической ссылки
-                        const wordFileLink = 'http://localhost:5000' + data.wordLink;
-                        // Вставляем ссылку в элемент <a>
-                        this.setAttribute('href', wordFileLink);
-                        // Перенаправляем пользователя по новой ссылке
-                        window.location.href = wordFileLink;
-                    });
-                } else {
-                    console.error('Content DIV not found!');
+                // Получаем данные и добавляем их как HTML
+                eventSource.onmessage = function(event) {
+                    if (event.data == "[DONE]") {
+                        console.log("Stream ended")
+                        generateDocBtn.style.display = 'flex';
+                        
+                        eventSource.close(); // Закрываем стрим
+                        // Обновляем содержимое элемента
+                        streamOutput.innerHTML = collectedHTML;
+                        generate_doc().then((val) => {
+                            downloadLink = val
+                            Livewire.dispatch('save-data', {content: streamOutput.innerHTML, link: val});
+                        });
+   
+                    } else {
+                        const newHTML = decodeHTMLEntities(event.data);
+                        collectedHTML += newHTML;
+                        // Обновляем содержимое элемента
+                        streamOutput.innerHTML = collectedHTML;   
+                        streamOutput.scrollTop = streamOutput.scrollHeight;  // Прокрутка к концу
+                    }
+                };
+
+                async function generate_doc() {
+                    const response = await fetch("http://localhost:5000/generate_doc/", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ html_content: streamOutput.innerHTML }),
+                        });
+
+                        const result = await response.json();
+                        
+                        if (result.download_link) {
+                            return "http://localhost:5000" + result.download_link;
+                        }
                 }
-            });
-            Livewire.on('recreate', (data) => {
-                const contentDiv = document.getElementById('content');
-                if (contentDiv) {
-                    contentDiv.innerHTML = ''; // Добавляем содержимое
-                    document.getElementById('export-word').style.display = 'none';
-                } else {
-                    console.error('Content DIV not found!');
-                }
+                // Отправляем HTML контент на сервер для генерации документа
+                generateDocBtn.addEventListener('click', async function() {
+                    window.location.href = downloadLink;
+                });
+
+                // Когда поток завершается
+                eventSource.onclose = function() {
+                    console.log("Stream завершен и контент преобразован в HTML.");
+                };
+
+                eventSource.onerror = function() {
+                    eventSource.close();
+                };
             })
+
+            Livewire.on('clear-content', (event) => {
+                const streamOutput = document.getElementById('content');
+                document.getElementById('export-word').style.display = 'none';
+                streamOutput.innerHTML = '';
+            })
+
+            
         });
 
     </script>
