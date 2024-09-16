@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Attempt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -19,7 +20,7 @@ class AuthController extends Controller
             'name' => ['required'],
             'password' => ['required']
         ]);
-        
+
         if (Auth::attempt($credentials)) {
             return redirect(route('dashboard'));
         } else {
@@ -42,12 +43,17 @@ class AuthController extends Controller
             $newUser = User::create([
                 'email' => $user->email,
                 'name' => $user->name,
+                'role_id' => 2,
                 'password' => bcrypt('admin123')
             ]);
+
             Auth::login($newUser);
         }
-
-        return redirect(route('dashboard'));
+        if (Auth::user()->role_id == 1) {
+            return redirect(route('admin-dashboard'));
+        } else {
+            return redirect(route('dashboard'));
+        }
     }
 
     public function logout()

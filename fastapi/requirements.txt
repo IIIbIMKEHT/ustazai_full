@@ -13,3 +13,4 @@ html2image
 xhtml2pdf
 tiktoken
 sse-starlette
+cryptography

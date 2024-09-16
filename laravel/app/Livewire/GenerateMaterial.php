@@ -6,6 +6,8 @@ use App\Models\Material;
 use App\Models\MaterialType;
 use App\Models\Subject;
 use Database\Seeders\SubjectSeeder;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\Validate;
 use Livewire\Attributes\On;
@@ -78,15 +80,31 @@ class GenerateMaterial extends Component
     {
         $this->validate();
         $this->dispatch('clear-content');
-        $this->dispatch('start-stream', detail: [
-            'class_level' => strval($this->class_id),
-            'subject' => intval($this->subject_id),
-            'task_type' => intval($this->type->id),
-            'topic' => $this->type->id == 9 ? "" : $this->topic,
-            'is_kk' => $this->lang,
-            'qty' => $this->qty,
-            'term' => $this->term
-        ]);
+        if (auth()->user()->count == 0) {
+            $this->dispatch('alert-message');
+        } else {
+           $this->dispatch('start-stream', detail: [
+                'class_level' => strval($this->class_id),
+                'subject' => intval($this->subject_id),
+                'task_type' => intval($this->type->id),
+                'topic' => $this->type->id == 9 ? "" : $this->topic,
+                'is_kk' => $this->lang,
+                'qty' => $this->qty,
+                'term' => $this->term,
+                'token' => $this->getEncryptedString()
+            ]);
+        }
+    }
+
+
+    public function getEncryptedString()
+    {
+        $encryptionKey = env('ENCRYPTION_KEY');
+        $data = auth()->user()->count;
+        $iv = random_bytes(16);
+        $encrypted = openssl_encrypt($data, 'AES-256-CBC', $encryptionKey, OPENSSL_RAW_DATA, $iv);
+        $combined = $iv . $encrypted;
+        return rtrim(strtr(base64_encode($combined), '+/', '-_'), '=');
     }
 
     #[On('save-data')]
@@ -101,16 +119,20 @@ class GenerateMaterial extends Component
             'content' => $content,
             'word_link' => $link
         ]);
+        $user = Auth::user();
+        $user->count--;
+        $user->save();
+        $this->dispatch('update-count');
         $this->dispatch('update-list');
     }
     public function send()
-    {       
+    {
         set_time_limit(300); // Устанавливает лимит в 60 секунд
         $this->loading = true;
         $this->dispatch('recreate');
         $this->wordLink = '';
         $this->pdfLink = '';
-        
+
         $response = Http::timeout(300)->post('http://fastapi_app:5000/generate_material', [
             'class_level' => strval($this->class_id),
             'subject' => $this->subject_id,
@@ -121,7 +143,7 @@ class GenerateMaterial extends Component
             'term' => $this->term
         ]);
         $result = json_decode($response->body(), 1);
-        
+
         if ($result['valid']) {
             $this->content = $result['material'];
             $this->wordLink = $result['wordLink'];

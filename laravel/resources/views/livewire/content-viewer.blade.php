@@ -34,7 +34,7 @@
 @endpush
 <div>
     <div id="content">
-        
+
     </div>
     <div class="container flex " id="action-buttons">
         <div class="mx-3"></div>
@@ -47,12 +47,13 @@
 </div>
 
 @push('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("livewire:init", () => {
             Livewire.on('start-stream', (event) => {
-                const { class_level, subject, topic, is_kk, qty, term, task_type } = event.detail;
-                
-                const eventSource = new EventSource(`http://45.67.59.104:5000/stream_material/?class_level=${class_level}&subject=${subject}&topic=${topic}&is_kk=${is_kk}&qty=${qty}&term=${term}&task_type=${task_type}`);
+                const { class_level, subject, topic, is_kk, qty, term, task_type, token } = event.detail;
+
+                const eventSource = new EventSource(`http://localhost:5000/stream_material/?class_level=${class_level}&subject=${subject}&topic=${topic}&is_kk=${is_kk}&qty=${qty}&term=${term}&task_type=${task_type}&token=${token}`);
                 const generateDocBtn = document.getElementById("export-word");
                 const streamOutput = document.getElementById('content');
                 let downloadLink = '';
@@ -70,7 +71,7 @@
                     if (event.data == "[DONE]") {
                         console.log("Stream ended")
                         generateDocBtn.style.display = 'flex';
-                        
+
                         eventSource.close(); // Закрываем стрим
                         // Обновляем содержимое элемента
                         streamOutput.innerHTML = collectedHTML;
@@ -78,18 +79,18 @@
                             downloadLink = val
                             Livewire.dispatch('save-data', {content: streamOutput.innerHTML, link: val});
                         });
-   
+
                     } else {
                         const newHTML = decodeHTMLEntities(event.data);
                         collectedHTML += newHTML;
                         // Обновляем содержимое элемента
-                        streamOutput.innerHTML = collectedHTML;   
+                        streamOutput.innerHTML = collectedHTML;
                         streamOutput.scrollTop = streamOutput.scrollHeight;  // Прокрутка к концу
                     }
                 };
 
                 async function generate_doc() {
-                    const response = await fetch("http://45.67.59.104:5000/generate_doc/", {
+                    const response = await fetch("http://localhost:5000/generate_doc/", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
@@ -98,9 +99,9 @@
                         });
 
                         const result = await response.json();
-                        
+
                         if (result.download_link) {
-                            return "http://45.67.59.104:5000" + result.download_link;
+                            return "http://localhost:5000" + result.download_link;
                         }
                 }
                 // Отправляем HTML контент на сервер для генерации документа
@@ -124,7 +125,14 @@
                 streamOutput.innerHTML = '';
             })
 
-            
+            Livewire.on('alert-message', (event) => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Ваш лимит попыток исчерпан",
+                    html: "Для получения дополнительной информации, пожалуйста, свяжитесь с нами по телефону <br> +7 (707) 500-17-10",
+                    footer: '<a href="mailto:kazitech2023@gmail.com">или по электронной почте kazitech2023@gmail.com</a>'
+                });
+            })
         });
 
     </script>

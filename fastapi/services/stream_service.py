@@ -50,7 +50,7 @@ async def getStream(
         level_test=level_test, 
         term=term
     )
-    print(f"Prompt is: {prompt}", flush=True)
+    
     # Формируем сообщения
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},

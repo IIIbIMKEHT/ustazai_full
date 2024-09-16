@@ -1,5 +1,6 @@
 import asyncio
 import os
+from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
@@ -7,12 +8,13 @@ from fastapi.responses import StreamingResponse
 from langchain.callbacks.streaming_aiter import AsyncIteratorCallbackHandler
 from helper.prompt_helper import get_prompt
 from models.material_model import MaterialRequest
+from services.encryption_service import decrypt_data
 from services.generate_pdf import generate_pdf
 from services.generate_service import check_topic_validity, generate_material
 import uvicorn
 from services.stream_service import getStream
 from services.generate_word import generate_doc
-
+load_dotenv()
 app = FastAPI()
 # Разрешение всех источников (для разработки)
 app.add_middleware(
@@ -24,7 +26,12 @@ app.add_middleware(
 )
 
 @app.get("/stream_material/")
-async def generate_material_endpoint(class_level: int, subject: str, topic: str, task_type: str, is_kk: bool, qty: int, term: str):
+async def generate_material_endpoint(class_level: int, subject: str, topic: str, task_type: str, is_kk: bool, qty: int, term: str, token: str):
+    encryptionKey = os.getenv('ENCRYPTION_KEY')
+    decryptedData = decrypt_data(token, encryptionKey)
+    print(f"Count is: {decryptedData}")
+    if (int(decryptedData) == 0):
+        return None
     return StreamingResponse(getStream(class_level=class_level, subject=subject, topic=topic, task_type=task_type,
                                  is_kk=is_kk, qty=qty, term=term), media_type="text/event-stream")
 

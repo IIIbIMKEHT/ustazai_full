@@ -16,12 +16,9 @@ class UserSeeder extends Seeder
         if (User::count() == 0) {
             User::create([
                 'name' => 'admin',
-                'email' => 'admin@gmail.com',
-                'password' => bcrypt('admin123')
-            ]);
-            User::create([
-                'name' => 'moder',
-                'email' => 'moder@gmail.com',
+                'email' => 'kazitech2023@gmail.com',
+                'role_id' => 1,
+                'count' => 1000,
                 'password' => bcrypt('admin123')
             ]);
         }

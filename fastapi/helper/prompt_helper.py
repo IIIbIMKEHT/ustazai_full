@@ -24,11 +24,11 @@ def get_prompt(
         level_test: str = None, 
         term: str = "1"
     ):
-    print(f"SubjectID is: {type(subject_id)}")
+    
     language = 'kk' if is_kk else 'ru'
     # Получаем предмет по его идентификатору
     subject = get_subject_by_id(subject_id=subject_id, lang=language)
-    print(f"Subject is: {subject}")
+    
     # Подготовка значений по умолчанию для языка интерфейса
     interface_lang = 'казахском' if is_kk else 'русском'
     
