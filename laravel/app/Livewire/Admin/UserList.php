@@ -11,21 +11,26 @@ class UserList extends Component
     use WithPagination;
 
     public $query = '';
+    public $count;
 
     public function updatedQuery()
     {
         $this->resetPage();
     }
 
-    public function mount()
+    public function addCount($userID)
     {
-
+        $user = User::find($userID);
+        $user->count += intval($this->count);
+        $user->save();
+        $this->count = null;
+        $this->resetPage();
     }
 
     public function render()
     {
         return view('livewire.admin.user-list', [
-            'users' => User::where('role_id', 2)->where('email', 'like', '%'.$this->query.'%')->latest()->paginate(20)
+            'users' => User::with('materials')->where('role_id', 2)->where('email', 'like', '%'.$this->query.'%')->latest()->paginate(20)
         ]);
     }
 }

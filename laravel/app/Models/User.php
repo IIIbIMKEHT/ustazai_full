@@ -57,4 +57,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Attempt::class, 'user_id', 'id');
     }
+
+    public function materials()
+    {
+        return $this->hasMany(Material::class, 'user_id', 'id');
+    }
 }

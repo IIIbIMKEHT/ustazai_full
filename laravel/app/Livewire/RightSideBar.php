@@ -22,7 +22,7 @@ class RightSideBar extends Component
 
     public function getLists(): void
     {
-        $this->materials= Material::select('subjects.title_ru as subject_name', 'subjects.id as subject_id', DB::raw('count(materials.id) as count'))
+        $this->materials= Material::where('user_id', auth()->id())->select('subjects.title_ru as subject_name', 'subjects.id as subject_id', DB::raw('count(materials.id) as count'))
             ->join('subjects', 'materials.subject_id', '=', 'subjects.id')
             ->groupBy('subject_id', 'subjects.title_ru')
             ->get()

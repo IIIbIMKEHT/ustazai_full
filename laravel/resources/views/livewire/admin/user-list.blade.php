@@ -8,7 +8,7 @@
         <div class="flex">
           <div class="flex items-center" x-data="{isInputActive:false}">
             <label class="block">
-              <input wire:model.blur='query' x-effect="isInputActive === true &amp;&amp; $nextTick(() => { $el.focus()});" :class="isInputActive ? 'w-32 lg:w-48' : 'w-0'" class="form-input bg-transparent px-1 text-right transition-all duration-100 placeholder:text-slate-500 dark:placeholder:text-navy-200 w-0" placeholder="Search here..." type="text">
+              <input wire:model='query' x-effect="isInputActive === true &amp;&amp; $nextTick(() => { $el.focus()});" :class="isInputActive ? 'w-32 lg:w-48' : 'w-0'" class="form-input bg-transparent px-1 text-right transition-all duration-100 placeholder:text-slate-500 dark:placeholder:text-navy-200 w-0" placeholder="Search here..." type="text">
             </label>
             <button @click="isInputActive = !isInputActive" class="btn size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25">
               <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -34,7 +34,10 @@
                   Email
                 </th>
                 <th class="whitespace-nowrap bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5">
-                  Количество попыток
+                    Материалы
+                </th>
+                <th class="whitespace-nowrap bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5">
+                    Попытки
                 </th>
                 <th class="whitespace-nowrap rounded-tr-lg bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5">
                   Действие
@@ -47,6 +50,7 @@
                         <td class="whitespace-nowrap px-4 py-3 sm:px-5">{{ $loop->iteration }}</td>
                         <td class="whitespace-nowrap px-3 py-3 font-medium text-slate-700 dark:text-navy-100 lg:px-5">{{ $user->name }}</td>
                         <td class="whitespace-nowrap px-4 py-3 sm:px-5">{{ $user->email }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 sm:px-5">{{ $user->materials->count() }}</td>
                         <td class="whitespace-nowrap px-4 py-3 sm:px-5">{{ $user->count }}</td>
                         <td class="whitespace-nowrap px-4 py-3 sm:px-5">
                         <div x-data="usePopper({placement:'bottom-end',offset:4})" @click.outside="isShowPopper &amp;&amp; (isShowPopper = false)" class="inline-flex">
@@ -60,13 +64,14 @@
                             <div class="popper-box rounded-md border p-3 border-slate-150 bg-white py-1.5 font-inter dark:border-navy-500 dark:bg-navy-700">
                                 <label class="block">
                                     <input
+                                        wire:model='count'
                                         class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
                                         placeholder="count"
                                         type="text"
                                     />
                                     </label>
                                     <hr />
-                                    <button id="savedBtn"
+                                    <button wire:click='addCount({{ $user->id }})' type="button" id="savedBtn" @click="isShowPopper = !isShowPopper"
                                     class="btn bg-slate-150 font-medium text-slate-800 hover:bg-slate-200 focus:bg-slate-200 active:bg-slate-200/80 dark:bg-navy-500 dark:text-navy-50 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
                                 >
                                     Сохранить

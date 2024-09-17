@@ -65,7 +65,7 @@ class="main-content h-full chat-app mt-0 flex w-full flex-col"
 
 
 <livewire:admin.user-list />
-<livewire:admin.right-sidebar />
+<livewire:right-sidebar />
 </main>
 
 
