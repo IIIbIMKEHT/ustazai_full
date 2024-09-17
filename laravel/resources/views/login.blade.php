@@ -33,12 +33,12 @@
                     <span>Google</span>
                 </a>
             </div>
-            <div class="my-7 flex items-center space-x-3">
+            {{-- <div class="my-7 flex items-center space-x-3">
                 <div class="h-px flex-1 bg-slate-200 dark:bg-navy-500"></div>
                 <p>OR</p>
                 <div class="h-px flex-1 bg-slate-200 dark:bg-navy-500"></div>
-              </div>
-            <div class="flex space-x-4 my-5">
+              </div> --}}
+            {{-- <div class="flex space-x-4 my-5">
                 <form action="{{route('auth.simple')}}" method="post" class="w-full">
                     @csrf
                     <label class="block">
@@ -65,8 +65,8 @@
                             value="Отправить"
                         />
                     </label>
-            </form>
-            </div>
+                </form>
+            </div> --}}
             <div
                 class="flex justify-center text-xs text-slate-400 dark:text-navy-300"
             >
