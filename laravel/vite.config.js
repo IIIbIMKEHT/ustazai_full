@@ -8,4 +8,16 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    build: {
+        rollupOptions: {
+          output: {
+            manualChunks(id) {
+              if (id.includes('node_modules')) {
+                return 'vendor'; // Разделение зависимостей на отдельный чанк
+              }
+            }
+          }
+        },
+        chunkSizeWarningLimit: 1000 // Увеличение лимита до 1000 кБ
+      }
 });
