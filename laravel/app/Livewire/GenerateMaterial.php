@@ -78,6 +78,7 @@ class GenerateMaterial extends Component
 
     public function startStream()
     {
+        $fastapiUrl = env(FASTAPI_URL, 'http://localhost:5000');
         $this->validate();
         $this->dispatch('clear-content');
         if (auth()->user()->count == 0) {
@@ -91,7 +92,8 @@ class GenerateMaterial extends Component
                 'is_kk' => $this->lang,
                 'qty' => $this->qty,
                 'term' => $this->term,
-                'token' => $this->getEncryptedString()
+                'token' => $this->getEncryptedString(),
+                'api_url' => $fastapiUrl
             ]);
         }
     }
