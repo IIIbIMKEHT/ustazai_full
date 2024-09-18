@@ -53,7 +53,7 @@
             Livewire.on('start-stream', (event) => {
                 const { class_level, subject, topic, is_kk, qty, term, task_type, token } = event.detail;
 
-                const eventSource = new EventSource(`http://localhost:5000/stream_material/?class_level=${class_level}&subject=${subject}&topic=${topic}&is_kk=${is_kk}&qty=${qty}&term=${term}&task_type=${task_type}&token=${token}`);
+                const eventSource = new EventSource(`http://fastapi_app:5000/stream_material/?class_level=${class_level}&subject=${subject}&topic=${topic}&is_kk=${is_kk}&qty=${qty}&term=${term}&task_type=${task_type}&token=${token}`);
                 const generateDocBtn = document.getElementById("export-word");
                 const streamOutput = document.getElementById('content');
                 let downloadLink = '';
@@ -90,7 +90,7 @@
                 };
 
                 async function generate_doc() {
-                    const response = await fetch("http://localhost:5000/generate_doc/", {
+                    const response = await fetch("http://fastapi_app:5000/generate_doc/", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
@@ -101,7 +101,7 @@
                         const result = await response.json();
 
                         if (result.download_link) {
-                            return "http://localhost:5000" + result.download_link;
+                            return "http://fastapi_app:5000" + result.download_link;
                         }
                 }
                 // Отправляем HTML контент на сервер для генерации документа
