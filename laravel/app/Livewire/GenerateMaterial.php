@@ -78,7 +78,7 @@ class GenerateMaterial extends Component
 
     public function startStream()
     {
-        $fastapiUrl = env(FASTAPI_URL, 'http://localhost:5000');
+        $fastapiUrl = env('FASTAPI_URL', 'http://localhost:5000');
         $this->validate();
         $this->dispatch('clear-content');
         if (auth()->user()->count == 0) {
