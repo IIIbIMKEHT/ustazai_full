@@ -1,3 +1,3 @@
 <div class="mx-2">
-    <p>Количество попыток: {{ $count }}</p>
+    <p>{{ __('main.attempt_count') }}: {{ $count }}</p>
 </div>

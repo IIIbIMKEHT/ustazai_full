@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Material;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -22,7 +23,13 @@ class RightSideBar extends Component
 
     public function getLists(): void
     {
-        $this->materials= Material::where('user_id', auth()->id())->select('subjects.title_ru as subject_name', 'subjects.id as subject_id', DB::raw('count(materials.id) as count'))
+        $this->materials = App::getLocale() == 'ru' ? $this->getRu() : $this->getKk();
+    }
+
+    public function getRu()
+    {
+        return Material::where('user_id', auth()->id())
+            ->select('subjects.title_ru as subject_name', 'subjects.id as subject_id', DB::raw('count(materials.id) as count'))
             ->join('subjects', 'materials.subject_id', '=', 'subjects.id')
             ->groupBy('subject_id', 'subjects.title_ru')
             ->get()
@@ -35,6 +42,24 @@ class RightSideBar extends Component
                 ];
             });
     }
+
+    public function getKk()
+    {
+        return Material::where('user_id', auth()->id())
+            ->select('subjects.title_kk as subject_name', 'subjects.id as subject_id', DB::raw('count(materials.id) as count'))
+            ->join('subjects', 'materials.subject_id', '=', 'subjects.id')
+            ->groupBy('subject_id', 'subjects.title_kk')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [
+                    $item->subject_name => [
+                        'id' => $item->subject_id,
+                        'count' => $item->count
+                    ]
+                ];
+            });
+    }
+
     public function render()
     {
         return view('livewire.right-side-bar');

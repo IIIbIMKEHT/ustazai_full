@@ -1,0 +1,17 @@
+<?php
+
+return [
+    'send_button' => 'Отправить',
+    'export_button' => 'Экспорт в WORD',
+    'show_button' => 'Посмотреть',
+    'delete_button' => 'Удалить',
+    'select_class' => 'Выберите класс',
+    'select_subject' => 'Выберите предмет',
+    'select_qty' => 'Выберите количество вопросов',
+    'topic' => 'Тема урока',
+    'write_topic' => 'введите тему урока',
+    'select_lang' => 'Выберите язык материала',
+    'select_term' => 'Выберите четверть',
+    'history_chat' => 'История чатов',
+    'attempt_count' => 'Количество попыток'
+];

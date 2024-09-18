@@ -6,6 +6,7 @@ use App\Models\Material;
 use App\Models\MaterialType;
 use App\Models\Subject;
 use Database\Seeders\SubjectSeeder;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
@@ -112,12 +113,13 @@ class GenerateMaterial extends Component
     #[On('save-data')]
     public function saveData($content, $link)
     {
+        $materialTitle = App::getLocale() == 'ru' ? 'СОЧ' : 'ТЖБ';
         Material::create([
             'user_id' => auth()->id(),
             'subject_id' => $this->subject_id,
             'type_id' => $this->type->id,
             'class_level' => $this->class_id,
-            'title' => $this->type->id == 9 ? "СОЧ" : $this->topic,
+            'title' => $this->type->id == 9 ? $materialTitle : $this->topic,
             'content' => $content,
             'word_link' => $link
         ]);

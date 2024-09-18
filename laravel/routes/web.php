@@ -4,9 +4,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\LoadPDFController;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['middleware' => ['auth:web']], function () {
+Route::group([
+    'middleware' => ['auth:web', 'locale']
+], function () {
 //    Route::get('/', function () {
 //        return view('welcome');
 //    })->name('chat');
@@ -23,6 +26,12 @@ Route::group(['middleware' => ['auth:web']], function () {
     });
 
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::get('language/{locale}', function ($locale) {
+        App::setLocale($locale);
+        session()->put('locale', $locale);
+        return redirect()->back();
+    })->name('change-locale');
 });
 
 Route::group(['prefix' => 'auth'], function () {
@@ -31,3 +40,4 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('google-callback', [AuthController::class, 'googleCallback'])->name('auth.google-callback');
     Route::post('simple-auth', [AuthController::class, 'simpleAuth'])->name('auth.simple');
 });
+
