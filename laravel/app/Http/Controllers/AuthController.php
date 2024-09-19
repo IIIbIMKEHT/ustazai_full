@@ -44,6 +44,7 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'name' => $user->name,
                 'role_id' => 2,
+                'count' => 10,
                 'password' => bcrypt('admin123')
             ]);
 
