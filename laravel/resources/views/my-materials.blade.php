@@ -48,12 +48,12 @@
                                     <ul>
                                         <li>
                                             <a href="{{route('show-material', $material->id)}}" class="flex h-8 items-center px-3 pr-8 font-medium tracking-wide outline-none transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100">
-                                                {{ __('main.show_button') }}
+                                                {{ __('show_button') }}
                                             </a>
                                         </li>
                                         <li>
                                             <a  href="{{$material->word_link}}" class="flex h-8 items-center px-3 pr-8 font-medium tracking-wide outline-none transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100">
-                                                {{ __('main.export_button') }}
+                                                {{ __('export_button') }}
                                             </a>
                                         </li>
                                         <li>
@@ -61,7 +61,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="flex h-8 items-center px-3 pr-8 font-medium tracking-wide outline-none transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100">
-                                                    {{ __('main.delete_button') }}
+                                                    {{ __('delete_button') }}
                                                 </button>
                                             </form>
                                         </li>

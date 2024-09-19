@@ -102,7 +102,7 @@
                     </div>
                 </div>
                 <div class="my-5 flex flex-col items-center">
-                    <p>{{ __('main.history_chat') }}</p>
+                    <p>{{ __('history_chat') }}</p>
                 </div>
                 <div class="mx-2 overflow-auto">
                     <div class="flex flex-col space-y-3.5">

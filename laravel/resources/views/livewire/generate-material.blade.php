@@ -52,7 +52,7 @@
                 <div class="col-span-12 lg:col-span-4">
                     <div class="card space-y-5 p-4 sm:p-5">
                         <label class="block">
-                            <span>{{ __('main.select_lang') }}</span>
+                            <span>{{ __('select_lang') }}</span>
                             <select wire:model.blur="lang_id"
                                 class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
                             >
@@ -61,11 +61,11 @@
                             </select>
                         </label>
                         <label class="block">
-                            <span>{{ __('main.select_class') }}</span>
+                            <span>{{ __('select_class') }}</span>
                             <select wire:model.change="class_id"
                                 class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
                             >
-                                <option value="">{{ __('main.select_class') }}</option>
+                                <option value="">{{ __('select_class') }}</option>
                                 @foreach($classes as $id => $class)
                                     <option value="{{ $id }}">{{ $class }}</option>
                                 @endforeach
@@ -75,11 +75,11 @@
 
                         @if (!empty($subjects))
                             <label class="block">
-                                <span>{{ __('main.select_subject') }}</span>
+                                <span>{{ __('select_subject') }}</span>
                                 <select wire:model="subject_id"
                                     class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
                                 >
-                                    <option value="">{{ __('main.select_subject') }}</option>
+                                    <option value="">{{ __('select_subject') }}</option>
                                     @foreach($subjects as $subject)
                                         <option value="{{ $subject->id }}">{{ $subject->title }}</option>
                                     @endforeach
@@ -90,7 +90,7 @@
                         @endif
                         @if($type->id == 1 || $type->id == 2)
                             <label class="block">
-                                <span>{{ __('main.select_qty') }}</span>
+                                <span>{{ __('select_qty') }}</span>
                                 <select wire:model.blur="qty"
                                     class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
                                 >
@@ -102,7 +102,7 @@
                         @endif
                         @if($type->id == 9)
                             <label class="block">
-                                <span>{{ __('main.select_term') }}</span>
+                                <span>{{ __('select_term') }}</span>
                                 <select wire:model.blur="term"
                                     class="form-select mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
                                 >
@@ -115,10 +115,10 @@
                         @endif
                         @if($type->id != 9)
                             <label class="block">
-                                <span>{{ __('main.topic') }}:</span>
+                                <span>{{ __('topic') }}:</span>
                                 <input
                                     class="form-input mt-1.5 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
-                                    placeholder="{{ __('main.write_topic') }}"
+                                    placeholder="{{ __('write_topic') }}"
                                     type="text"
                                     wire:model.blur="topic"
                                 />
@@ -131,7 +131,7 @@
                                 wire:target="send"
                                 class="form-input mt-1.5 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400/70 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"
                                 type="submit"
-                                value="{{ __('main.send_button') }}"
+                                value="{{ __('send_button') }}"
                             />
                         </label>
 
