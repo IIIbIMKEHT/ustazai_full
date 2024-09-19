@@ -18,6 +18,6 @@ export default defineConfig({
             }
           }
         },
-        chunkSizeWarningLimit: 1000 // Увеличение лимита до 1000 кБ
+        chunkSizeWarningLimit: 5000 // Увеличение лимита до 1000 кБ
       }
 });
