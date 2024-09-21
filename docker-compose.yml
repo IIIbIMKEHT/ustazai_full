@@ -17,17 +17,6 @@ services:
       - DB_PASSWORD=root
     depends_on:
       - db
-    command: >
-      sh -c "sleep 10 &&
-      composer config --global process-timeout 100000 &&
-      composer install &&
-      npm install --fetch-timeout=500000 --fetch-retries=30 &&
-      npm run build &&
-      php artisan key:generate &&
-      php artisan migrate --seed &&
-      chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache &&
-      chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache &&
-      php-fpm"
 
   nginx:
     image: nginx:latest

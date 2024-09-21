@@ -54,6 +54,12 @@
                 const { class_level, subject, topic, is_kk, qty, term, task_type, token, api_url } = event.detail;
 
                 const eventSource = new EventSource(`${api_url}/stream_material/?class_level=${class_level}&subject=${subject}&topic=${topic}&is_kk=${is_kk}&qty=${qty}&term=${term}&task_type=${task_type}&token=${token}`);
+                
+                const streamTimeout = setTimeout(() => {
+                    eventSource.close();
+                    console.log("Stream closed due to timeout.");
+                }, 30000);  // Таймаут 30 секунд
+
                 const generateDocBtn = document.getElementById("export-word");
                 const streamOutput = document.getElementById('content');
                 let downloadLink = '';
@@ -68,6 +74,7 @@
 
                 // Получаем данные и добавляем их как HTML
                 eventSource.onmessage = function(event) {
+                    clearTimeout(streamTimeout);  // Если пришло сообщение, сбрасываем таймаут
                     if (event.data == "[DONE]") {
                         console.log("Stream ended")
                         generateDocBtn.style.display = 'flex';
@@ -79,7 +86,6 @@
                             downloadLink = val
                             Livewire.dispatch('save-data', {content: streamOutput.innerHTML, link: val});
                         });
-
                     } else {
                         const newHTML = decodeHTMLEntities(event.data);
                         collectedHTML += newHTML;
@@ -115,6 +121,7 @@
                 };
 
                 eventSource.onerror = function() {
+                    clearTimeout(streamTimeout);
                     eventSource.close();
                 };
             })
