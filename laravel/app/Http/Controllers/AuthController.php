@@ -57,9 +57,14 @@ class AuthController extends Controller
         }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
+        // Clear the session
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Редирект на Google для выхода
         return redirect(route('login'));
     }
 }

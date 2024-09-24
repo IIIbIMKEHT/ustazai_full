@@ -93,7 +93,6 @@ class GenerateMaterial extends Component
                 'is_kk' => $this->lang,
                 'qty' => $this->qty,
                 'term' => $this->term,
-                'token' => $this->getEncryptedString(),
                 'api_url' => $fastapiUrl
             ]);
         }

@@ -19,8 +19,8 @@ load_dotenv(find_dotenv(), override=True)
 
 # Инициализация модели
 model = ChatOpenAI(
-    model_name="gpt-4o-mini", 
-    temperature=0.6, 
+    model_name="gpt-4o-mini",
+    temperature=0.7,
     max_tokens=4096, 
     top_p=0.8,
     streaming=True

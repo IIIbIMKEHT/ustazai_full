@@ -14,6 +14,7 @@ from services.generate_service import check_topic_validity, generate_material
 import uvicorn
 from services.stream_service import getStream
 from services.generate_word import generate_doc
+
 load_dotenv()
 app = FastAPI()
 # Разрешение всех источников (для разработки)
@@ -25,17 +26,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+ALLOWED_IPS = [os.getenv('SERVER_IP')]
+
+
+@app.middleware("http")
+async def ip_whitelist(request: Request, call_next):
+    client_ip = request.client.host
+    if client_ip not in ALLOWED_IPS:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+    response = await call_next(request)
+    return response
+
+
 @app.get("/stream_material/")
-async def generate_material_endpoint(class_level: int, subject: str, topic: str, task_type: str, is_kk: bool, qty: int, term: str, token: str):
-    encryptionKey = os.getenv('ENCRYPTION_KEY')
-    decryptedData = decrypt_data(token, encryptionKey)
-    print(f"Count is: {decryptedData}")
-    if (int(decryptedData) == 0):
-        return None
+async def generate_material_endpoint(class_level: int, subject: str, topic: str, task_type: str, is_kk: bool, qty: int,
+                                     term: str):
     return StreamingResponse(getStream(class_level=class_level, subject=subject, topic=topic, task_type=task_type,
-                                 is_kk=is_kk, qty=qty, term=term), media_type="text/event-stream")
-
-
+                                       is_kk=is_kk, qty=qty, term=term), media_type="text/event-stream")
 
 
 @app.post("/generate_material/")
@@ -63,19 +71,19 @@ async def generate_document_endpoint(request: Request):
     # Получаем HTML-контент из POST-запроса
     data = await request.json()
     html_content = data.get("html_content")
-    
+
     if not html_content:
         return JSONResponse(status_code=400, content={"error": "HTML content is missing"})
 
     # Генерация Word документа
     download_link = generate_doc(html_content)
-    
+
     # Возвращаем ссылку на скачивание
     return JSONResponse(content={"download_link": download_link})
 
+
 @app.get('/download/{filename}')
 async def download_file(filename: str):
-
     # Получаем полный путь к файлу
     file_path = os.path.join("export_docs/", filename)
 
