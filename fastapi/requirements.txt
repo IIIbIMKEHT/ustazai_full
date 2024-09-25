@@ -1,6 +1,6 @@
 fastapi~=0.115.0
 uvicorn~=0.30.6
-langchain~=0.3.0
+langchain
 langchain-openai
 openai
 python-dotenv~=1.0.1
