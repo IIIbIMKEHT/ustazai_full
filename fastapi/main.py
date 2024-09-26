@@ -26,15 +26,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-ALLOWED_IPS = [os.getenv('SERVER_IP')]
+ALLOWED_IPS = ["127.0.0.1"]
 
 
 @app.middleware("http")
 async def ip_whitelist(request: Request, call_next):
-    client_ip = request.client.host
+    # Получаем IP из заголовка X-Forwarded-For, если он есть
+    forwarded_for = request.headers.get("X-Forwarded-For")
+    if forwarded_for:
+        client_ip = forwarded_for.split(',')[0]  # Получаем первый IP, если есть цепочка
+    else:
+        client_ip = request.client.host  # Используем прямой IP, если заголовка нет
+
+    # Проверка, находится ли IP в списке разрешённых
     if client_ip not in ALLOWED_IPS:
         raise HTTPException(status_code=403, detail="Not authorized")
 
+    # Продолжаем обработку запроса
     response = await call_next(request)
     return response
 
