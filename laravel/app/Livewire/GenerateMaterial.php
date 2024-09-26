@@ -93,7 +93,8 @@ class GenerateMaterial extends Component
                 'is_kk' => $this->lang,
                 'qty' => $this->qty,
                 'term' => $this->term,
-                'api_url' => $fastapiUrl
+                'api_url' => $fastapiUrl,
+                'email' => auth()->user()->email
             ]);
         }
     }
@@ -122,9 +123,9 @@ class GenerateMaterial extends Component
             'content' => $content,
             'word_link' => $link
         ]);
-        $user = Auth::user();
-        $user->count--;
-        $user->save();
+//        $user = Auth::user();
+//        $user->count--;
+//        $user->save();
         $this->dispatch('update-count');
         $this->dispatch('update-list');
     }

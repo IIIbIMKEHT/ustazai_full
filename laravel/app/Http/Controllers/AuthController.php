@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Attempt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
@@ -33,6 +34,7 @@ class AuthController extends Controller
     }
     public function googleCallback()
     {
+        $apiUrl = env('FASTAPI_URL', 'http://127.0.0.1:5000');
         $user = Socialite::driver('google')->stateless()->user();
 
         $localUser = User::where('email', $user->email)->first();
@@ -50,6 +52,7 @@ class AuthController extends Controller
 
             Auth::login($newUser);
         }
+
         if (Auth::user()->role_id == 1) {
             return redirect(route('admin-dashboard'));
         } else {
