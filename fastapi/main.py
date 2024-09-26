@@ -1,22 +1,28 @@
-import asyncio
 import os
+
+import uvicorn
 from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.responses import StreamingResponse
-from langchain.callbacks.streaming_aiter import AsyncIteratorCallbackHandler
-from helper.prompt_helper import get_prompt
+from sqlalchemy.orm import Session
+
 from models.material_model import MaterialRequest
-from services.encryption_service import decrypt_data
-from services.generate_pdf import generate_pdf
+from models.token_data import TokenData
+from services.check_count import get_user_by_email, get_db
 from services.generate_service import check_topic_validity, generate_material
-import uvicorn
-from services.stream_service import getStream
 from services.generate_word import generate_doc
+from services.jwt_service import create_jwt_token
+from services.stream_service import getStream
 
 load_dotenv()
 app = FastAPI()
+
+
+
+
+
 # Разрешение всех источников (для разработки)
 app.add_middleware(
     CORSMiddleware,
@@ -26,30 +32,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-ALLOWED_IPS = ["127.0.0.1"]
 
-
-@app.middleware("http")
-async def ip_whitelist(request: Request, call_next):
-    # Получаем IP из заголовка X-Forwarded-For, если он есть
-    forwarded_for = request.headers.get("X-Forwarded-For")
-    if forwarded_for:
-        client_ip = forwarded_for.split(',')[0]  # Получаем первый IP, если есть цепочка
-    else:
-        client_ip = request.client.host  # Используем прямой IP, если заголовка нет
-
-    # Проверка, находится ли IP в списке разрешённых
-    if client_ip not in ALLOWED_IPS:
-        raise HTTPException(status_code=403, detail="Not authorized")
-
-    # Продолжаем обработку запроса
-    response = await call_next(request)
-    return response
+@app.post("/token")
+async def create_token(data: TokenData):
+    token = create_jwt_token(email=data.email)
+    return {"access_token": token, "token_type": "bearer"}
 
 
 @app.get("/stream_material/")
 async def generate_material_endpoint(class_level: int, subject: str, topic: str, task_type: str, is_kk: bool, qty: int,
-                                     term: str):
+                                     term: str, email: str, db: Session = Depends(get_db)):
+    if not email:
+        raise HTTPException(status_code=400, detail="Email doesn't exist")
+    get_user_by_email(email=email, db=db)
     return StreamingResponse(getStream(class_level=class_level, subject=subject, topic=topic, task_type=task_type,
                                        is_kk=is_kk, qty=qty, term=term), media_type="text/event-stream")
 
